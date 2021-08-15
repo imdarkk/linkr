@@ -3,16 +3,24 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
 
-import NotFoundScreen from '../screens/NotFoundScreen';
 import { RootStackParamList } from '../types';
 import Login from '../screens/Login';
+import Register from '../screens/Register';
+import Profile from '../components/Profile';
 import LinkingConfiguration from './LinkingConfiguration';
+import { useAuth } from '../auth/auth-context';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+  const { loggedIn } = useAuth();
+
   return (
     <NavigationContainer
       linking={LinkingConfiguration}>
-      <RootNavigator />
+      {loggedIn ? (
+        <AuthNavigator />
+      ) : (
+        <RootNavigator />
+      )}
     </NavigationContainer>
   );
 }
@@ -25,6 +33,15 @@ function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="login" component={Login} />
+      <Stack.Screen name="register" component={Register} />
     </Stack.Navigator>
   );
+}
+
+function AuthNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="profile" component={Profile} />
+    </Stack.Navigator>
+  )
 }

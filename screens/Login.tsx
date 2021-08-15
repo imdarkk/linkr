@@ -1,36 +1,31 @@
 import { StackScreenProps } from "@react-navigation/stack";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View, TextInput, Dimensions } from 'react-native';
+import { useAuth } from "../auth/auth-context";
 import { RootStackParamList } from "../types";
-import {useFonts} from 'expo-font';
 
 const { width, height } = Dimensions.get('window');
 
 export default function Login({ navigation }: StackScreenProps<RootStackParamList, 'Login'>) {
-    const [loaded] = useFonts({
-        Barlow: require('../assets/fonts/Barlow-Medium.ttf')
-    });
+    const [username, setUsername] = React.useState("");
+    const [password, setPassword] = React.useState("");
 
-    if (!loaded) {
-        return (
-            <Text>Loading...</Text>
-        );
-    } else {
-        return (
-            <View style={styles.login_page}>
-                <View style={styles.inputWrap}>
-                    <TextInput placeholder="Username" placeholderTextColor="#3D3C3C" style={styles.input} />
-                    <TextInput placeholder="Password" placeholderTextColor="#3D3C3C" style={styles.input} />
-                </View>
-                <TouchableOpacity><Text style={styles.fptext}>Forgot your password?</Text></TouchableOpacity>
+    const { login } = useAuth();
 
-                <View style={styles.inputWrap}>
-                    <TouchableOpacity style={styles.snbtn}><Text style={styles.sntext}>Login</Text></TouchableOpacity>
-                </View>
-                <TouchableOpacity><Text style={styles.natext}>Don't have an account?</Text></TouchableOpacity>
+    return (
+        <View style={styles.login_page}>
+            <View style={[styles.inputWrap, styles.inputWrapText]}>
+                <TextInput placeholder="Username" placeholderTextColor="#3D3C3C" style={styles.input} value={username} onChangeText={text => setUsername(text)} />
+                <TextInput placeholder="Password" placeholderTextColor="#3D3C3C" style={styles.input} value={password} onChangeText={text => setPassword(text)} />
             </View>
-        );
-    }
+            <TouchableOpacity><Text style={styles.fptext}>Forgot your password?</Text></TouchableOpacity>
+
+            <View style={styles.inputWrap}>
+                <TouchableOpacity style={styles.snbtn} onPress={() => login(username, password)}><Text style={styles.sntext}>Login</Text></TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('register')}><Text style={styles.natext}>Don't have an account?</Text></TouchableOpacity>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -42,7 +37,10 @@ const styles = StyleSheet.create({
     },
     inputWrap: {
         width: width,
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    inputWrapText: {
+        marginTop: "45%"
     },
     input: {
         width: "80%",
@@ -56,7 +54,6 @@ const styles = StyleSheet.create({
     fptext: {
         color: '#6F6F6F',
         left: 40,
-        fontFamily: 'Barlow'
     },
     snbtn: {
         width: "80%",
@@ -70,14 +67,12 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         fontSize: 17,
-        fontFamily: 'Barlow'
     },
     natext: {
         color: '#6F6F6F',
-        left: 40,
-        top: 200,
+        marginLeft: 40,
+        marginTop: 200,
         fontSize: 18,
-        fontWeight: '500',
-        fontFamily: 'Barlow'
+        fontWeight: '500'
     }
 });

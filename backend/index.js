@@ -47,7 +47,7 @@ app.post('/regUser', (req, res) => {
 app.post('/logUser', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    console.log("am here")
+    
     connection.query('SELECT * FROM users WHERE username=?', [username], async (err, result) => {
         if (err) throw err;
 
@@ -57,7 +57,7 @@ app.post('/logUser', (req, res) => {
             if (match) {
                 jwt.sign({ data: result[0] }, process.env.PK_JWT, (error, token) => {
                     if (error) throw error;
-                    console.log("i sent it")
+                    
                     res.status(200).cookie('tkn', token).send();
                 });
             } else {
@@ -76,6 +76,14 @@ app.post('/check', (req, res) => {
         if (decoded.data.username) {
             res.status(200).send();
         }
+    });
+});
+
+app.get('/getGeneralLinks', (req, res) => {
+    connection.query("SELECT * FROM socialmedia", (err, result) => {
+        if(err) throw err;
+
+        res.status(200).json(result);
     });
 });
 

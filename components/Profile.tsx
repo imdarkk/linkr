@@ -2,6 +2,7 @@ import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Dimensions } from 'react-native';
 import * as Font from 'expo-font';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,12 +14,24 @@ export default function Profile({ navigation }: StackScreenProps<RootStackParamL
     });
 
     React.useEffect(() => {
-
+      (async() => {
+        const reqData = await fetch('http://10.0.2.2/getGeneralLinks');
+        const resData = await reqData.json();
+        setLinks(resData);
+      })();
     }, []);
     
     return (
         <View style={styles.profile_page}>
             <Text style={styles.logo}>LINKR.</Text>
+            <SearchableDropdown 
+              onTextChange={text => console.log(text)}
+              onItemSelect={item => console.log(item)}
+              items={links}
+              defaultIndex={2}
+              resetValue={false}
+              underlineColorAndroid="transparent"
+            />
         </View>
     );
 }
